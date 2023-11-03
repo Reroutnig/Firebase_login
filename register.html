@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <title>Register</title>
+</head>
+<body>
+    <div class="wrapper">
+        <section class="s-wrapper flex-class">
+            <div class="content flex-class">
+                <p class="name"> Register User</p>
+                <form id="MainformSignIn">
+                <input type="email" name="email" id="regemail" placeholder="E-mail"/>
+               <input type="text" name="name" id="regname" placeholder="Full Name"/>
+                <input type="password" name="password" id="regpassword" placeholder="Password"/>
+               <button type="submit" id="signinbtn" name="signup_submit">Sign-Up</button>
+            </div>
+        </form>
+            <div class="sub-container flex-class">
+                <p>Already have an account? <a href="login.html"><span id="login-link">Log In</span></a></p>
+
+            </div>
+        </section>
+    </div>
+    
+    <script type="module">
+        // Import functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+        import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyCE4N3-_icVHFbWLWI9rqO_E-uXwqB67rk",
+    authDomain: "pawmates-a1757.firebaseapp.com",
+    projectId: "pawmates-a1757",
+    storageBucket: "pawmates-a1757.appspot.com",
+    messagingSenderId: "212632097126",
+    appId: "1:212632097126:web:bb4518a57e31549c2178a7"
+  };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth();
+        
+        
+       //create a user account for new users 
+       document.getElementById("signinbtn").addEventListener('click', function(e){
+        var regEmail = document.getElementById('regemail').value;
+       var  regName = document.getElementById('regname').value;
+        var regPassword = document.getElementById('regpassword').value;
+        let RegisterUser = evt =>{
+            evt.preventDefault();
+            createUserWithEmailAndPassword(auth, regEmail, regPassword)
+            .then(async(userCredential) =>{
+                const user = userCredential.user;
+                const uid=user.uid;
+                // adds the users' name and email to the database
+                console.log(user);
+                set(ref(db, 'users/' + document.getElementById("regname").value),{
+                    username: document.getElementById("regname").value,
+                    email: document.getElementById("regemail").value
+                })    
+               //alerts if account creation is successful
+                alert('user created');
+                window.location.href = "login.html";  
+            })
+            .catch((error) =>{
+               const errorCode = error.code;
+               const errorMessage = error.message;
+               alert(errorMessage);
+
+            }); 
+        }
+        MainformSignIn.addEventListener('submit', RegisterUser);
+       
+        });
+       
+    
+      </script>
+</body>
+</html>

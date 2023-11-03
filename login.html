@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <div>
+        <section>
+            <div>
+                <p> Login </p>
+            <form id="FormLogin">
+                <input type="email" name="email" id="email" placeholder="E-mail">
+                <input type="password" name="password" id="password" placeholder="Password">
+                <button type="submit" id="logInbtn" name="login_submit">Login</button>
+                <p><a href=resetpwd.html>Forgot Password?</a></p> 
+            </div>
+        </form>
+            <div>
+                <p>Don't have an account? <a href="register.html"><span id="signup-link">Sign-up</span></a></p>
+
+            </div>
+        </section>
+    </div>
+
+
+    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+        import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyCE4N3-_icVHFbWLWI9rqO_E-uXwqB67rk",
+    authDomain: "pawmates-a1757.firebaseapp.com",
+    projectId: "pawmates-a1757",
+    storageBucket: "pawmates-a1757.appspot.com",
+    messagingSenderId: "212632097126",
+    appId: "1:212632097126:web:bb4518a57e31549c2178a7"
+  };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth();       
+        
+        // Event listener for the form submission.
+       document.getElementById("logInbtn").addEventListener('click', function(e){
+        var logInEmail = document.getElementById('email').value;//gets email input
+        var logInPassword = document.getElementById('password').value;//gets password input
+        const loginBtn =  document.querySelector('.logInbtn');
+       //checks if user already have an account if so, then prints welcome. if false, then alerts user with appropriate message
+        let LogInUser = evt =>{
+            evt.preventDefault();
+            signInWithEmailAndPassword (auth, logInEmail, logInPassword)
+            .then(async (userCredential) =>{
+                const user = userCredential.user;
+                const dt = new Date();
+
+                console.log(user);
+                //goes into database to check users
+                update(ref(db, 'users/' ),{
+                    //displays a user last login time
+                    last_login:dt,
+                    
+                })
+                alert('Welcome Back'); 
+                window.location.href = "home.html";   
+            })
+            .catch((error) =>{
+                const errorCode = error.code;
+               const errorMessage = error.message;
+               alert(errorMessage);
+
+            }); 
+        }
+        FormLogin.addEventListener('submit', LogInUser);
+        });
+    //double checks if email and password are correct (remaining code need to be added)
+    const user=auth.currentUser;
+    onAuthStateChanged(auth, (user) => {
+    if(user){
+    const uid=user.uid;
+    }else{
+    //will add code later
+    }
+});
+
+      </script>
+   
+</body>
+
+</html>
